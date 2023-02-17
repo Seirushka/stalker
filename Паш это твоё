@@ -1,0 +1,117 @@
+
+#stalker
+import pygame
+from random import randrange
+pygame.init()
+
+res = 900
+res1 = 1200
+size = 30
+rad = 250
+
+im = pygame.image.load('map.png') #слово сталкер не нужно если открываешь фаил в пустой рабочей среде
+
+
+x, y = randrange(0, res1, size), randrange(0, res, size)
+
+#аномалии
+anom1 = randrange(0, res1,  size), randrange(0, res, size)
+anom2 = randrange(0, res1, size), randrange(0, res, size)
+anom3 = randrange(0, res1, size), randrange(0, res, size)
+anom4 = randrange(0, res1, size), randrange(0, res, size)
+anom5 = randrange(0, res1, size), randrange(0, res, size)
+
+#локаторы
+lock1 = randrange(0, res1, size), randrange(0, res, size)
+lock2 = randrange(0, res1, size), randrange(0, res, size)
+lock3 = randrange(0, res1, size), randrange(0, res, size)
+
+#Поле зрения
+aur1 = lock1[0]-210, lock1[1] - 210
+aur2 = lock2[0]-210, lock2[1]-210
+aur3 = lock3[0]-210, lock3[1]-210
+
+
+f = lock1
+print(*f)
+
+
+
+#шрифты
+font = pygame.font.SysFont('Arial', 48)
+t = font.render(str(lock1), True, pygame.Color('darkorange'))
+title = font.render(('лок 1'), True, pygame.Color('darkorange'))
+
+length = 1
+man = [(x, y)]
+dx, dy = 0, 0
+fps = 10
+
+surf = pygame.display.set_mode((res1*1.5, res))
+surf.fill(pygame.Color('black'))
+
+loud1 = pygame.Surface((450, 450))
+loud2 = pygame.Surface((450, 450))
+loud3 = pygame.Surface((450, 450))
+
+loud1.fill((255, 255, 255))
+loud1.set_alpha(100)
+loud2.fill((255, 255, 255))
+loud2.set_alpha(100)
+loud3.fill((255, 255, 255))
+loud3.set_alpha(100)
+
+sc = pygame.Surface([res1, res])
+clock = pygame.time.Clock()
+
+while True:
+    pygame.draw.rect(sc, pygame.Color('red'), (*aur1, size, size))
+
+    surf.blit(sc, (0, 0))
+    sc.blit(im, (0, 0))
+    sc.blit(loud1, aur1)
+    sc.blit(loud2, aur2)
+    sc.blit(loud3, aur3)
+
+    pygame.draw.rect(sc, pygame.Color('orange'), (*lock1, size, size))
+    pygame.draw.rect(sc, pygame.Color('orange'), (*lock2, size, size))
+    pygame.draw.rect(sc, pygame.Color('orange'), (*lock3, size, size))
+    [(pygame.draw.rect(sc, pygame.Color('green'), (i, j, size, size))) for i, j in man]
+
+    man.append((x, y))
+    man = man[-length:]
+
+    if man[-1] == anom1 or man[-1] == anom2 or man[-1] == anom3 or man[-1] == anom4 or man[-1] == anom5:
+        print(x, y)
+        break
+
+    if x < 0 or x > res1 or y < 0 or y > res:
+        break
+
+    pygame.display.flip()
+    clock.tick(fps)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+
+    surf.blit(title, (1250, 100))
+    surf.blit(t, (1250, 150))
+
+    key = pygame.key.get_pressed()
+    if key[pygame.K_w]:
+        dx, dy = 0, -1
+        x += dx * size
+        y += dy * size
+    if key[pygame.K_s]:
+        dx, dy = 0, 1
+        x += dx * size
+        y += dy * size
+    if key[pygame.K_a]:
+        dx, dy = -1, 0
+        x += dx * size
+        y += dy * size
+    if key[pygame.K_d]:
+        dx, dy = 1, 0
+        x += dx * size
+        y += dy * size
